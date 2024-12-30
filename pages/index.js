@@ -15,10 +15,21 @@ const MEETUP_LIST = [{
     description: 'this is just a second meet up'
 }]
 
-function HomePage(){
-   return (<MeetupList meetups={MEETUP_LIST}  >
+function HomePage(props){
+   return (<MeetupList meetups={props.meetups}  >
 
    </MeetupList>)
+}
+
+export async function getStaticProps(){
+    
+     //fetch data from an API
+
+     return {
+        props: {
+            meetups: MEETUP_LIST
+        }
+     }
 }
 
 export default HomePage
