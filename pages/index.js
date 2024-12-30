@@ -1,10 +1,18 @@
 import MeetupList from '../components/meetups/MeetupList';
+import Head from 'next/head';
 
 
 function HomePage(props){
-   return (<MeetupList meetups={props.meetups}  >
-
-   </MeetupList>)
+   return (
+   <>
+        <Head>
+        
+        <title>Meetup Page</title>
+        <meta name='description' content='This is the page for all the alumni to gather'/>
+        </Head>
+        <MeetupList meetups={props.meetups}  />
+   </>
+   )
 }
 
 /* export async function getServerSideProps(context){
