@@ -1,3 +1,4 @@
+import { MongoClient,ObjectId } from "mongodb";
 
 function MeetUpDetails(props){
 
@@ -10,40 +11,39 @@ function MeetUpDetails(props){
 
 }
 
-export function getStaticPaths(){
+export async function getStaticPaths(){
+
+        
+    const connectionDB =  await   MongoClient.connect('mongodb://localhost:27017/');
+    const db = connectionDB.db('nextjstest');
+    const meetupCollections = db.collection('meetups');
+    const result = await meetupCollections.find({},{_id:1}).toArray();
+    connectionDB.close()
+ 
     return {
         fallback: false,
-        paths:[
-            {
-                params:{
-                    meetupid: 'm1'
-                }
-            },{
-                params:{
-                    meetupid: 'm2'
-                }
-            },
-            {
-                params:{
-                    meetupid: 'm3'
-                }
-            }
-        ]
+        paths: result.map(item => ({params:{meetupid : item._id.toString()}}))
     }
 }
 
-export function getStaticProps(context){
+export async function getStaticProps(context){
+
+    
     const meetupId = context.params.meetupid;
     console.log(meetupId)
+
+    const connectionDB =  await   MongoClient.connect('mongodb://localhost:27017/');
+    const db = connectionDB.db('nextjstest');
+    const meetupCollections = db.collection('meetups');
+    const meetupData = await meetupCollections.findOne({_id: new ObjectId(meetupId)});
+    connectionDB.close()
+
     return {
          props:{
-            meetupData: {
-                id: meetupId,
-                image: 'https://imageio.forbes.com/specials-images/dam/imageserve/503064668/960x0.jpg?height=474&width=711&fit=bounds',
-                title: 'A first meet up',
-                address: 'No 22 new cross street, puducherry-605004',
-                description: 'this is just a first meet up'
-            }
+            meetupData:{
+    ...meetupData,
+    _id: meetupData._id.toString(), 
+  }
          }
     }
 }
